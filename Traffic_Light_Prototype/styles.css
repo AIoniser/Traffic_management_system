@@ -1,0 +1,1041 @@
+:root {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-hover: #27354a;
+  --surface-inset: #0b1120;
+  --border: #334155;
+  --border-light: #475569;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --road: #1e2430;
+  --road-paint: #e2e8f0;
+  --grass: #132a1d;
+  --green: #10b981;
+  --yellow: #f59e0b;
+  --red: #ef4444;
+  --radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text-main);
+  background: var(--bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 28px;
+  background: #111c2e;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-branding h1 {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.eyebrow {
+  color: #38bdf8;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0 0 2px 0;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin: 2px 0 0 0;
+}
+
+.header-status {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.status-pill {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.78rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #64748b;
+}
+
+.status-dot.live {
+  background: #10b981;
+}
+
+.status-pill.running {
+  background: #064e3b;
+  color: #6ee7b7;
+  border-color: #047857;
+}
+
+.status-pill.running .status-dot {
+  background: #34d399;
+}
+
+.phase-pill {
+  background: #0c4a6e;
+  color: #7dd3fc;
+  border-color: #0369a1;
+}
+
+/* Layout */
+main {
+  display: grid;
+  grid-template-columns: minmax(560px, 1.28fr) minmax(390px, 0.95fr);
+  gap: 20px;
+  max-width: 1440px;
+  padding: 20px;
+  margin: auto;
+}
+
+.simulation-column,
+.control-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* Card Toolbar */
+.card-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  background: #172235;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.toolbar-title {
+  font-size: 0.84rem;
+  font-weight: 650;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.speed-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.speed-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+
+.speed-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: #cbd5e1;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.speed-btn:hover {
+  background: var(--surface-hover);
+  color: #ffffff;
+}
+
+.speed-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+/* Intersection Viewport */
+.intersection-viewport {
+  padding: 16px;
+  display: grid;
+  place-items: center;
+  background: #090e17;
+}
+
+.intersection {
+  width: min(100%, 560px);
+  height: 560px;
+  position: relative;
+  background: var(--grass);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #1e3a2b;
+}
+
+/* Roads */
+.road {
+  position: absolute;
+  background: var(--road);
+}
+
+.road.vertical {
+  height: 100%;
+  width: 36%;
+  left: 32%;
+}
+
+.road.horizontal {
+  width: 100%;
+  height: 36%;
+  top: 32%;
+}
+
+/* Highway Center Double Yellow Line */
+.road-divider-v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  border-left: 2px dashed rgba(248, 250, 252, 0.25);
+  transform: translateX(-50%);
+}
+
+.road-divider-h {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 2px dashed rgba(248, 250, 252, 0.25);
+  transform: translateY(-50%);
+}
+
+/* Zebra Crosswalks */
+.crosswalk {
+  position: absolute;
+  z-index: 3;
+}
+
+.crosswalk-north {
+  left: 32%;
+  width: 36%;
+  top: calc(32% - 18px);
+  height: 18px;
+}
+
+.crosswalk-south {
+  left: 32%;
+  width: 36%;
+  top: 68%;
+  height: 18px;
+}
+
+.crosswalk-east {
+  left: 68%;
+  width: 18px;
+  top: 32%;
+  height: 36%;
+}
+
+.crosswalk-west {
+  left: calc(32% - 18px);
+  width: 18px;
+  top: 32%;
+  height: 36%;
+}
+
+.zebra-stripes {
+  width: 100%;
+  height: 100%;
+}
+
+.crosswalk-north .zebra-stripes,
+.crosswalk-south .zebra-stripes {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--road-paint) 0,
+    var(--road-paint) 7px,
+    transparent 7px,
+    transparent 14px
+  );
+}
+
+.crosswalk-east .zebra-stripes,
+.crosswalk-west .zebra-stripes {
+  background: repeating-linear-gradient(
+    0deg,
+    var(--road-paint) 0,
+    var(--road-paint) 7px,
+    transparent 7px,
+    transparent 14px
+  );
+}
+
+.stop-line {
+  position: absolute;
+  background: #f8fafc;
+}
+
+.crosswalk-north .stop-line {
+  top: 0; left: 0; width: 100%; height: 3px;
+}
+.crosswalk-south .stop-line {
+  bottom: 0; left: 0; width: 100%; height: 3px;
+}
+.crosswalk-east .stop-line {
+  top: 0; right: 0; height: 100%; width: 3px;
+}
+.crosswalk-west .stop-line {
+  top: 0; left: 0; height: 100%; width: 3px;
+}
+
+/* Pedestrian Signals at Curbside Corners */
+.ped-signal {
+  position: absolute;
+  z-index: 6;
+  background: #090e17;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 0.65rem;
+  display: flex;
+  gap: 2px;
+}
+
+.ped-signal-nw { top: calc(32% - 32px); left: calc(32% - 46px); }
+.ped-signal-ne { top: calc(32% - 32px); left: calc(68% + 12px); }
+.ped-signal-sw { top: calc(68% + 12px); left: calc(32% - 46px); }
+.ped-signal-se { top: calc(68% + 12px); left: calc(68% + 12px); }
+
+.ped-icon {
+  opacity: 0.2;
+}
+
+.ped-icon.active {
+  opacity: 1;
+}
+
+/* Center Junction & Dial */
+.center-junction {
+  position: absolute;
+  z-index: 5;
+  left: 32%;
+  top: 32%;
+  width: 36%;
+  height: 36%;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.center-dial {
+  width: 108px;
+  height: 108px;
+  position: relative;
+  background: #090e17;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.progress-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotate(-90deg);
+}
+
+.ring-fill {
+  transition: stroke-dashoffset 0.25s linear, stroke 0.25s ease;
+}
+
+.dial-inner {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#countdown {
+  font-size: 2.1rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #f8fafc;
+  font-variant-numeric: tabular-nums;
+}
+
+.dial-inner small {
+  color: #64748b;
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-top: 1px;
+}
+
+.active-road-badge {
+  margin-top: 3px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #1e293b;
+  color: #38bdf8;
+}
+
+/* Approaches Layout & Geometry */
+.approach {
+  position: absolute;
+  z-index: 4;
+}
+
+.approach-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.queue-pill {
+  background: #dc2626;
+  color: #ffffff;
+  padding: 0 5px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+/* NORTH: Traffic heads downward towards center */
+.approach.north {
+  top: 8px;
+  left: 32%;
+  width: 36%;
+  height: calc(32% - 30px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* SOUTH: Traffic heads upward towards center */
+.approach.south {
+  top: calc(68% + 22px);
+  left: 32%;
+  width: 36%;
+  bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* WEST: Traffic heads eastward towards center */
+.approach.west {
+  left: 8px;
+  top: 32%;
+  height: 36%;
+  width: calc(32% - 30px);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.approach.west .approach-header {
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+}
+
+/* EAST: Traffic heads westward towards center */
+.approach.east {
+  left: calc(68% + 22px);
+  top: 32%;
+  height: 36%;
+  right: 8px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.approach.east .approach-header {
+  writing-mode: vertical-lr;
+}
+
+/* Traffic Signals */
+.signal-box {
+  display: inline-flex;
+  gap: 4px;
+  background: #020617;
+  padding: 3px 5px;
+  border-radius: 4px;
+  border: 1px solid #334155;
+}
+
+.signal-box.horizontal {
+  flex-direction: column;
+}
+
+.lamp {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #1e293b;
+  transition: background 0.15s ease;
+}
+
+.lamp.red.active {
+  background: var(--red);
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
+}
+
+.lamp.yellow.active {
+  background: var(--yellow);
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.6);
+}
+
+.lamp.green.active {
+  background: var(--green);
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+
+/* Lane Groups */
+.lane-group {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+}
+
+.lane-group.horizontal {
+  flex-direction: column;
+}
+
+.lane {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 2px 3px;
+  min-width: 28px;
+  min-height: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lane-group.horizontal .lane {
+  flex-direction: row;
+  min-width: 68px;
+  min-height: 22px;
+}
+
+.lane-label {
+  font-size: 0.62rem;
+  color: #64748b;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.lane-group.horizontal .lane-label {
+  margin-bottom: 0;
+  margin-right: 4px;
+}
+
+.lane-cars {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+}
+
+.lane-group.horizontal .lane-cars {
+  flex-direction: row;
+}
+
+/* Vehicles */
+.car {
+  width: 10px;
+  height: 16px;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  display: inline-block;
+}
+
+.lane-group.horizontal .car {
+  width: 16px;
+  height: 10px;
+}
+
+.car.left {
+  background: #60a5fa;
+}
+
+.car.straight {
+  background: #fbbf24;
+}
+
+.car.right {
+  background: #f87171;
+}
+
+.car.ambulance {
+  background: #ffffff;
+  border: 1px solid #ef4444;
+  position: relative;
+}
+
+.car.ambulance::after {
+  content: "+";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ef4444;
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* Emergency Preemption Bar */
+.emergency-bar {
+  padding: 10px 16px;
+  background: #1a1e2d;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.emergency-label {
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: #f87171;
+}
+
+.dispatch-group {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-dispatch {
+  background: #281d24;
+  border: 1px solid #7f1d1d;
+  color: #fca5a5;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-dispatch:hover {
+  background: #b91c1c;
+  color: #ffffff;
+  border-color: #b91c1c;
+}
+
+/* Explainability & Decision Inspector */
+.inspector-card {
+  padding: 16px;
+}
+
+.inspector-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.inspector-header h3 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin: 0;
+  color: #f8fafc;
+}
+
+.tag-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #0f172a;
+  color: var(--text-muted);
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.tag-badge.warning {
+  background: #78350f;
+  color: #fde68a;
+  border-color: #b45309;
+}
+
+.tag-badge.hidden {
+  display: none;
+}
+
+.formula-box {
+  background: var(--surface-inset);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.formula-text {
+  color: #cbd5e1;
+}
+
+.formula-text code {
+  color: #38bdf8;
+  font-family: ui-monospace, Menlo, monospace;
+}
+
+.formula-sub {
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  border-top: 1px solid var(--border);
+  padding-top: 5px;
+}
+
+.priority-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.priority-cell {
+  background: var(--surface-inset);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 9px;
+  font-size: 0.72rem;
+}
+
+.priority-cell.active-pick {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.priority-cell strong {
+  display: block;
+  font-size: 0.8rem;
+  color: #ffffff;
+}
+
+.priority-num {
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+/* Control Deck (Right Column) */
+.control-card {
+  padding: 18px 20px;
+}
+
+.control-card h2 {
+  font-size: 1.1rem;
+  font-weight: 750;
+  margin: 0 0 8px 0;
+  color: #ffffff;
+}
+
+.decision-callout {
+  font-size: 0.82rem;
+  color: #e2e8f0;
+  background: var(--surface-inset);
+  border-left: 3px solid var(--primary);
+  padding: 9px 12px;
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 14px;
+  line-height: 1.45;
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.btn-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 650;
+  font-size: 0.84rem;
+  cursor: pointer;
+  border: 0;
+  transition: all 0.15s ease;
+}
+
+.btn-primary {
+  flex: 1;
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn-secondary {
+  background: #334155;
+  color: #e2e8f0;
+}
+
+.btn-secondary:hover {
+  background: #475569;
+}
+
+.control-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.field label {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 650;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+select {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-inset);
+  color: var(--text-main);
+  font-size: 0.8rem;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.info-note {
+  border: 1px solid var(--border);
+  background: var(--surface-inset);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+.section-title-row {
+  margin: 16px 0 6px 0;
+}
+
+.section-title-row h3 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 0;
+}
+
+/* Performance Metrics Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.metric-tile {
+  background: var(--surface-inset);
+  border: 1px solid var(--border);
+  padding: 8px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tile-label {
+  font-size: 0.65rem;
+  color: #64748b;
+  font-weight: 650;
+  text-transform: uppercase;
+}
+
+.tile-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 2px 0 1px 0;
+}
+
+.tile-detail {
+  font-size: 0.66rem;
+  color: #38bdf8;
+}
+
+/* Approach Queue Summary Grid */
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.summary-tile {
+  background: var(--surface-inset);
+  border: 1px solid var(--border);
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summary-tile.active {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.summary-tile strong {
+  color: #38bdf8;
+}
+
+/* Real-Time Telemetry Table */
+.table-container {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 14px;
+}
+
+#road-dashboard {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.72rem;
+  background: var(--surface-inset);
+}
+
+#road-dashboard th {
+  background: #172235;
+  color: #cbd5e1;
+  font-weight: 650;
+  padding: 7px 8px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+#road-dashboard td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  color: #cbd5e1;
+}
+
+#road-dashboard tr:last-child td {
+  border-bottom: 0;
+}
+
+#road-dashboard tr.active-road td {
+  background: rgba(16, 185, 129, 0.12);
+  color: #6ee7b7;
+  font-weight: 650;
+}
+
+/* Queue Chart */
+#queue-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #090e17;
+}
+
+/* Academic Note Callout */
+.academic-note {
+  margin-top: 14px;
+  background: #17253b;
+  border: 1px solid #1e3a5f;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.74rem;
+  color: #93c5fd;
+  line-height: 1.45;
+}
+
+.academic-note strong {
+  display: block;
+  color: #60a5fa;
+  font-size: 0.72rem;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+}
+
+.academic-note p {
+  margin: 0;
+}
+
+footer {
+  text-align: center;
+  color: #64748b;
+  font-size: 0.76rem;
+  padding: 16px 20px 24px;
+}
+
+@media (max-width: 1100px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+}

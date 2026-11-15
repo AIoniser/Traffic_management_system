@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Adaptive Traffic Light System | PBL Semester 5</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-branding">
+        <p class="eyebrow">Manipal University Jaipur · Department of Computer Science & Engineering</p>
+        <h1>Smart Adaptive Traffic Light System</h1>
+        <p class="subtitle">Semester 5 PBL Project · Dynamic Signal Optimization Evaluated on Kolkata Traffic Dataset</p>
+      </div>
+      <div class="header-status">
+        <div id="mode-status" class="status-pill paused">
+          <span class="status-dot"></span> Simulation Paused
+        </div>
+        <div id="phase-pill" class="status-pill phase-pill">Phase: Idle</div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Left Column: Intersection Simulation -->
+      <section class="simulation-column">
+        <div class="card intersection-card">
+          <div class="card-toolbar">
+            <div class="toolbar-title">
+              <span class="status-dot live"></span> 4-Way Intersection Simulation
+            </div>
+            <div class="speed-controls">
+              <span class="speed-label">Speed:</span>
+              <button class="speed-btn" data-speed="1000">1×</button>
+              <button class="speed-btn" data-speed="500">2×</button>
+              <button class="speed-btn active" data-speed="250">4× (PBL)</button>
+              <button class="speed-btn" data-speed="125">8×</button>
+            </div>
+          </div>
+
+          <div class="intersection-viewport">
+            <div class="intersection" id="intersection-map">
+              <!-- Roads -->
+              <div class="road vertical">
+                <div class="road-divider-v"></div>
+              </div>
+              <div class="road horizontal">
+                <div class="road-divider-h"></div>
+              </div>
+
+              <!-- Zebra Crosswalks with Stop Lines -->
+              <div class="crosswalk crosswalk-north">
+                <div class="stop-line"></div>
+                <div class="zebra-stripes"></div>
+              </div>
+              <div class="crosswalk crosswalk-south">
+                <div class="stop-line"></div>
+                <div class="zebra-stripes"></div>
+              </div>
+              <div class="crosswalk crosswalk-east">
+                <div class="stop-line"></div>
+                <div class="zebra-stripes"></div>
+              </div>
+              <div class="crosswalk crosswalk-west">
+                <div class="stop-line"></div>
+                <div class="zebra-stripes"></div>
+              </div>
+
+              <!-- Pedestrian Signals (Curbside) -->
+              <div class="ped-signal ped-signal-nw" id="ped-signal-north">
+                <span class="ped-icon ped-hand active">✋</span>
+                <span class="ped-icon ped-walk">🚶</span>
+              </div>
+              <div class="ped-signal ped-signal-se" id="ped-signal-south">
+                <span class="ped-icon ped-hand active">✋</span>
+                <span class="ped-icon ped-walk">🚶</span>
+              </div>
+              <div class="ped-signal ped-signal-ne" id="ped-signal-east">
+                <span class="ped-icon ped-hand active">✋</span>
+                <span class="ped-icon ped-walk">🚶</span>
+              </div>
+              <div class="ped-signal ped-signal-sw" id="ped-signal-west">
+                <span class="ped-icon ped-hand active">✋</span>
+                <span class="ped-icon ped-walk">🚶</span>
+              </div>
+
+              <!-- Center Junction Hub with Circular Countdown -->
+              <div class="center-junction">
+                <div class="center-dial">
+                  <svg class="progress-ring" width="108" height="108">
+                    <circle class="ring-bg" stroke="#1e293b" stroke-width="4" fill="transparent" r="46" cx="54" cy="54"/>
+                    <circle class="ring-fill" id="progress-circle" stroke="#0ea5e9" stroke-width="4" stroke-dasharray="289" stroke-dashoffset="0" stroke-linecap="round" fill="transparent" r="46" cx="54" cy="54"/>
+                  </svg>
+                  <div class="dial-inner">
+                    <span id="countdown">--</span>
+                    <small>SECONDS</small>
+                    <div id="active-road-badge" class="active-road-badge">IDLE</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- North Approach (Traffic moves Southward into junction) -->
+              <div class="approach north" data-road="North">
+                <div class="approach-header">
+                  <span>North</span>
+                  <span class="queue-pill" id="queue-badge-North">0</span>
+                </div>
+                <div class="lane-group">
+                  <div class="lane" data-lane="0" title="Left Turn Lane">
+                    <span class="lane-label">L</span>
+                    <div class="lane-cars"></div>
+                  </div>
+                  <div class="lane" data-lane="1" title="Straight Lane">
+                    <span class="lane-label">S</span>
+                    <div class="lane-cars"></div>
+                  </div>
+                  <div class="lane" data-lane="2" title="Right Turn Lane">
+                    <span class="lane-label">R</span>
+                    <div class="lane-cars"></div>
+                  </div>
+                </div>
+                <!-- Traffic Signal placed at stop line facing oncoming traffic -->
+                <div class="signal-box" id="signal-North">
+                  <i class="lamp red active"></i>
+                  <i class="lamp yellow"></i>
+                  <i class="lamp green"></i>
+                </div>
+              </div>
+
+              <!-- South Approach (Traffic moves Northward into junction) -->
+              <div class="approach south" data-road="South">
+                <div class="signal-box" id="signal-South">
+                  <i class="lamp red active"></i>
+                  <i class="lamp yellow"></i>
+                  <i class="lamp green"></i>
+                </div>
+                <div class="lane-group">
+                  <div class="lane" data-lane="0" title="Left Turn Lane">
+                    <span class="lane-label">L</span>
+                    <div class="lane-cars"></div>
+                  </div>
+                  <div class="lane" data-lane="1" title="Straight Lane">
+                    <span class="lane-label">S</span>
+                    <div class="lane-cars"></div>
+                  </div>
+                  <div class="lane" data-lane="2" title="Right Turn Lane">
+                    <span class="lane-label">R</span>
+                    <div class="lane-cars"></div>
+                  </div>
+                </div>
+                <div class="approach-header">
+                  <span>South</span>
+                  <span class="queue-pill" id="queue-badge-South">0</span>
+                </div>
+              </div>
+
+              <!-- East Approach (Traffic moves Westward into junction) -->
+              <div class="approach east" data-road="East">
+                <div class="signal-box horizontal" id="signal-East">
+                  <i class="lamp red active"></i>
+                  <i class="lamp yellow"></i>
+                  <i class="lamp green"></i>
+                </div>
+                <div class="lane-group horizontal">
+                  <div class="lane" data-lane="0" title="Left Turn Lane">
+                    <span class="lane-label">L</span>
+                    <div class="lane-cars"></div>
+                  </div>
+                  <div class="lane" data-lane="1" title="Straight Lane">
+                    <span class="lane-label">S</span>
+                    <div class="lane-cars"></div>
+                  </div>
+                  <div class="lane" data-lane="2" title="Right Turn Lane">
+                    <span class="lane-label">R</span>
+                    <div class="lane-cars"></div>
+                  </div>
+                </div>
+                <div class="approach-header">
+                  <span>East</span>
+                  <span class="queue-pill" id="queue-badge-East">0</span>
+                </div>
+              </div>
+
+              <!-- West Approach (Traffic moves Eastward into junction) -->
+              <div class="approach west" data-road="West">
+                <div class="approach-header">
+                  <span>West</span>
+                  <span class="queue-pill" id="queue-badge-West">0</span>
+                </div>
+                <div class="lane-group horizontal">
+                  <div class="lane" data-lane="0" title="Left Turn Lane">
+                    <span class="lane-label">L</span>
+                    <div class="lane-cars"></div>
+                  </div>
+                  <div class="lane" data-lane="1" title="Straight Lane">
+                    <span class="lane-label">S</span>
+                    <div class="lane-cars"></div>
+                  </div>
+                  <div class="lane" data-lane="2" title="Right Turn Lane">
+                    <span class="lane-label">R</span>
+                    <div class="lane-cars"></div>
+                  </div>
+                </div>
+                <div class="signal-box horizontal" id="signal-West">
+                  <i class="lamp red active"></i>
+                  <i class="lamp yellow"></i>
+                  <i class="lamp green"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Emergency Preemption Controls -->
+          <div class="emergency-bar">
+            <span class="emergency-label">Emergency Vehicle Preemption:</span>
+            <div class="dispatch-group">
+              <button class="btn-dispatch" data-road="North">Add Ambulance (North)</button>
+              <button class="btn-dispatch" data-road="East">Add Ambulance (East)</button>
+              <button class="btn-dispatch" data-road="South">Add Ambulance (South)</button>
+              <button class="btn-dispatch" data-road="West">Add Ambulance (West)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Explainability & Decision Inspector -->
+        <div class="card inspector-card">
+          <div class="inspector-header">
+            <div>
+              <h3>Adaptive Controller Decision & Formula</h3>
+              <span id="early-cutoff-badge" class="tag-badge warning hidden">Dynamic Early Cutoff: Queue Cleared</span>
+            </div>
+            <span class="tag-badge">Rule-Based Decision Logic</span>
+          </div>
+
+          <div class="formula-box">
+            <div class="formula-text">
+              <strong>Green Duration Formula:</strong>
+              <code>clamp(20s, 60s, 15 + (1.5 × Queue) + HeadwayDelay + (0.04 × RedWait))</code>
+            </div>
+            <div class="formula-sub" id="formula-live-sub">
+              Formula evaluates at phase onset and locks allocated duration.
+            </div>
+          </div>
+
+          <div class="priority-grid" id="priority-breakdown">
+            <!-- Priority items populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Control Deck & Telemetry -->
+      <aside class="control-column">
+        <div class="card control-card">
+          <h2>Simulation Control Deck</h2>
+          <div id="decision-text" class="decision-callout">
+            Click "Start Simulation" to load Kolkata observations and begin signal switching.
+          </div>
+
+          <div class="btn-group">
+            <button id="start-button" class="btn btn-primary">Start Simulation</button>
+            <button id="reset-button" class="btn btn-secondary">Reset</button>
+          </div>
+
+          <div class="control-grid">
+            <div class="field">
+              <label for="controller-select">Signal Controller Mode</label>
+              <select id="controller-select">
+                <option value="Adaptive">Adaptive Controller (Dynamic Duration + Early Cutoff)</option>
+                <option value="Fixed time">Fixed-Time Controller (Strict 35s Cycle)</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="scenario-select">Traffic Demand Scenario</label>
+              <select id="scenario-select">
+                <option value="Normal">Normal Traffic (Baseline Demand)</option>
+                <option value="Rush hour">Rush-Hour Traffic (1.55× Demand)</option>
+                <option value="Uneven">Uneven Traffic (North/South Busy, East/West Light)</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="scenario-info" class="info-note">Waiting to start simulation.</div>
+
+          <!-- Key Metrics -->
+          <div class="section-title-row">
+            <h3>Cumulative Performance Metrics</h3>
+          </div>
+          <div id="performance-metrics" class="metrics-grid"></div>
+
+          <!-- Approach Summary -->
+          <div class="section-title-row">
+            <h3>Approach Queue Summary</h3>
+          </div>
+          <div id="road-summary" class="summary-grid"></div>
+
+          <!-- Approach Dashboard Table -->
+          <div class="section-title-row">
+            <h3>Real-Time Approach Telemetry</h3>
+          </div>
+          <div class="table-container">
+            <table id="road-dashboard">
+              <thead>
+                <tr>
+                  <th>Approach</th>
+                  <th>Lanes (L·S·R)</th>
+                  <th>Queue</th>
+                  <th>Delay</th>
+                  <th>Priority Score</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <!-- Queue History Chart -->
+          <div class="section-title-row">
+            <h3>Queue Length History</h3>
+          </div>
+          <canvas id="queue-chart" width="540" height="160" aria-label="Queue history chart"></canvas>
+
+          <!-- Evaluation Finding Callout -->
+          <div class="academic-note">
+            <strong>PBL Evaluation Finding (160 Simulations):</strong>
+            <p>Adaptive control reduces average delay by <strong>64.8%</strong> under uneven traffic and <strong>13.2%</strong> during rush hour compared to fixed-time by dynamically allocating green time and eliminating idle green phases.</p>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      Smart Adaptive Traffic Light System · Semester 5 Project Based Learning · Manipal University Jaipur
+    </footer>
+
+    <script src="kolkata_observations.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
